@@ -5,7 +5,7 @@ export class ActionsStack{
         this.last = new Promise(resolve => resolve())
     }
 
-    addAction(action:() => void | Promise<void>): ActionsStack{
+    addAction(action:() => any | Promise<any>): ActionsStack{
         const prev = this.last;
 
         this.last = new Promise(async res => {

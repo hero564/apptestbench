@@ -11,11 +11,11 @@ export abstract class AppiumElement {
     
     protected _client: WebDriver.Client;
 
-    protected _IDs: Set<string>;
+    protected _ID: string;
 
-    constructor(client: WebDriver.Client, IDs: string[] = []){
+    constructor(client: WebDriver.Client, ID?: string){
         this._client = client;
-        this._IDs = new Set(IDs);
+        this._ID = ID;
     }
 
     protected async findElements(using: string, value: string): Promise<string[]>{
@@ -41,15 +41,11 @@ export abstract class AppiumElement {
         return this._client;
     }
 
-    get IDs(): string[]{
-        const ids = [];
-        this.IDs.forEach(id => ids.push(ids));
-        return ids;
+    get ID(): string{
+        return this._ID;
     }
 
     abstract get(locator: ByBuilder): AppiumElement;
-
-    abstract getElements(): AppiumElement[];
 
     abstract click(): AppiumElement;
 

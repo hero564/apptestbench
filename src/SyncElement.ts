@@ -7,18 +7,22 @@ export class SyncElement extends AppiumElement{
     
     protected actionsStack: ActionsStack;
 
-    constructor(client: WebDriver.Client, actionStack: ActionsStack, IDs: string[] = []){
-        super(client, IDs);
+    constructor(client: WebDriver.Client, actionStack: ActionsStack, ID: string){
+        super(client, ID);
     }
 
     get(locator: ByBuilder): AppiumElement {
         throw new Error("Method not implemented.");
     }    
-    getElements(): AppiumElement[] {
-        return this.IDs.map(id => new SyncElement(this.client, this.actionsStack, [id]))
-    }
+
     click(): AppiumElement {
-        throw new Error("Method not implemented.");
+        this.actionsStack.addAction(() => {
+            return repeatUntil({
+                requestFunction: () => this.client.elementClick(this.ID),
+                responseHandler: response => !response.error
+            })
+        });
+        return this;
     }
     sendKeys(): AppiumElement {
         throw new Error("Method not implemented.");

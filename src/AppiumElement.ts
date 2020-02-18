@@ -49,7 +49,7 @@ export abstract class AppiumElement {
 
     abstract click(): AppiumElement;
 
-    abstract sendKeys(): AppiumElement;
+    abstract sendKeys(value: string): AppiumElement;
 
     abstract clear(): AppiumElement;
 

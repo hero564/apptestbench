@@ -18,9 +18,9 @@ export class SyncElement extends AppiumElement{
     }    
 
     click(): AppiumElement {
-        this.actionsStack.addAction(() => {
+        this.actionsStack.addAction(async () => {
             try{
-                return repeatUntil({
+                return await repeatUntil({
                     requestFunction: () => this.client.elementClick(this.ID),
                     responseHandler: response => {
                         return isNull(response)
@@ -32,8 +32,20 @@ export class SyncElement extends AppiumElement{
         });
         return this;
     }
-    sendKeys(): AppiumElement {
-        throw new Error("Method not implemented.");
+
+    //TODO: Fix the missing space key
+    sendKeys(value: string): AppiumElement {
+        this.actionsStack.addAction(async () => {
+            try{
+                return await repeatUntil({
+                    requestFunction: () => this.client.sendKeys(value.split('')),
+                    responseHandler: response => isNull(response)
+                });
+            } catch (err) {
+                throw new Error(`Unable to send keys value: "${value}"!`);
+            }
+        });
+        return this;
     }
     clear(): AppiumElement {
         throw new Error("Method not implemented.");

@@ -2,6 +2,7 @@ import { repeatUntil } from "./utils/request-utils";
 import { AppiumElement, Vector2d } from "./AppiumElement";
 import { ByBuilder } from "./By";
 import { ActionsStack } from "./ActionStack";
+import { isNull } from "util";
 
 export class SyncElement extends AppiumElement{
     
@@ -9,6 +10,7 @@ export class SyncElement extends AppiumElement{
 
     constructor(client: WebDriver.Client, actionStack: ActionsStack, ID: string){
         super(client, ID);
+        this.actionsStack = actionStack;
     }
 
     get(locator: ByBuilder): AppiumElement {
@@ -17,10 +19,16 @@ export class SyncElement extends AppiumElement{
 
     click(): AppiumElement {
         this.actionsStack.addAction(() => {
-            return repeatUntil({
-                requestFunction: () => this.client.elementClick(this.ID),
-                responseHandler: response => !response.error
-            })
+            try{
+                return repeatUntil({
+                    requestFunction: () => this.client.elementClick(this.ID),
+                    responseHandler: response => {
+                        return isNull(response)
+                    }
+                })
+            } catch (err) {
+                throw new Error(`Unable to click on the element!`);
+            }
         });
         return this;
     }

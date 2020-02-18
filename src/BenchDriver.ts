@@ -11,12 +11,16 @@ export interface FindElementSuccessResponse{
 
 export class BenchDriver{
     protected _client!: WebDriver.Client;
-    protected actionsStack: ActionsStack;
+    protected _actionsStack: ActionsStack;
 
     constructor(protected _options: WebDriver.Options){
-        this.actionsStack = new ActionsStack();
+        this._actionsStack = new ActionsStack();
     }
 
+    get actions(): ActionsStack{
+        return this._actionsStack;
+    }
+    
     async get(by: ByBuilder): Promise<SyncElement>{
         if(!by.options.field){
             throw new Error(
@@ -31,9 +35,8 @@ export class BenchDriver{
         
         let elementId: FindElementSuccessResponse;
         try{
-            elementId = await repeatUntil<FindElementSuccessResponse>({
+            const elementIdPromise = await repeatUntil<FindElementSuccessResponse>({
                 requestFunction: () => {
-                    console.warn('PING!')
                     return this._client.findElement(
                         by.options.field,
                         by.options.value
@@ -43,11 +46,16 @@ export class BenchDriver{
                 timeout: by.options.timeout,
                 tryCount: by.options.tryCount
             });
+
+            this.actions.addAction(async () => {
+                await elementIdPromise
+            });
+            elementId = await elementIdPromise;
         } catch (err) {
             throw new Error(`Can't find any element with using "${by.options.field}" with value "${by.options.value}"!`);
         }
 
-        const result = new SyncElement(this.client, this.actionsStack, elementId.ELEMENT);
+        const result = new SyncElement(this.client, this.actions, elementId.ELEMENT);
 
         return result;
     };

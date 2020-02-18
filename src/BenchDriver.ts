@@ -28,29 +28,26 @@ export class BenchDriver{
                 `Invalid value property: ${by.options.value}!`
             );
         }
-        const elementIdsPromise: Promise<string[]> = repeatUntil<FindElementSuccessResponse[]>({
-            requestFunction: () => {
-                console.warn('PING!')
-                return this._client.findElements(
-                    by.options.field,
-                    by.options.value
-                )
-            },
-            responseHandler: ((response: FindElementSuccessResponse[]) => {
-                    return response.length > 0
-                        && !response.map(elem => Boolean(elem.ELEMENT))
-                        .includes(false)
-                }
-            ),
-            timeout: by.options.timeout,
-            tryCount: by.options.tryCount
-        }).then(result => {
-            return result.map(element => element.ELEMENT);
-        }).catch(err => {
+        
+        let elementId: FindElementSuccessResponse;
+        try{
+            elementId = await repeatUntil<FindElementSuccessResponse>({
+                requestFunction: () => {
+                    console.warn('PING!')
+                    return this._client.findElement(
+                        by.options.field,
+                        by.options.value
+                    )
+                },
+                responseHandler: (response: FindElementSuccessResponse) => Boolean(response.ELEMENT),
+                timeout: by.options.timeout,
+                tryCount: by.options.tryCount
+            });
+        } catch (err) {
             throw new Error(`Can't find any element with using "${by.options.field}" with value "${by.options.value}"!`);
-        });
+        }
 
-        const result = new SyncElement(this.client, this.actionsStack, await elementIdsPromise);
+        const result = new SyncElement(this.client, this.actionsStack, elementId.ELEMENT);
 
         return result;
     };

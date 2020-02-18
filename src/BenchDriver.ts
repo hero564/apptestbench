@@ -1,7 +1,7 @@
 import Webdriver from 'webdriver';
 import { ByBuilderResult, ByBuilder } from './By';
 import { repeatUntil } from './utils/request-utils';
-import { BenchElements } from './BenchElement';
+import { SyncElement } from './SyncElement';
 
 export interface FindElementSuccessResponse{
     ELEMENT: string;
@@ -15,7 +15,7 @@ export class BenchDriver{
         
     }
 
-    async get(by: ByBuilder): Promise<BenchElements>{
+    async get(by: ByBuilder): Promise<SyncElement>{
         if(!by.options.field){
             throw new Error(
                 `Invalid field property: ${by.options.field}!`
@@ -48,7 +48,7 @@ export class BenchDriver{
             throw new Error(`Can't find any element with using "${by.options.field}" with value "${by.options.value}"!`);
         });
 
-        const result = new BenchElements(this.client, await elementIdsPromise);
+        const result = new SyncElement(this.client, await elementIdsPromise);
 
         return result;
     };

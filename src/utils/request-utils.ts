@@ -1,10 +1,11 @@
 import { BunchConfig } from "../Config";
+import { TimeoutError } from "../errors/TimeoutError";
 
 export async function repeatUntil<ReturnDataType>({
     requestFunction,
     responseHandler,
-    timeout = BunchConfig.current.findElementTimeout,
-    tryCount = BunchConfig.current.findElementTryCount
+    timeout = BunchConfig.current.repeatUntilTimeout,
+    tryCount = BunchConfig.current.repeatUntilTryCount
 }: {
     requestFunction: () => any | Promise<ReturnDataType>,
     responseHandler: (response: any | Promise<ReturnDataType>) => boolean | PromiseLike<boolean>,
@@ -13,11 +14,11 @@ export async function repeatUntil<ReturnDataType>({
 }): Promise<ReturnDataType>{
     return new Promise(async (resolve, reject) => {
         if(timeout <= 0 && tryCount <= 0){
-            reject(`At least of "timeout" or "tryCount" arguments should be > 0`)
+            reject(new Error(`At least one of "timeout" or "tryCount" arguments should be > 0`));
         }
 
         if(timeout){
-            setTimeout(() => reject(`Rejected by ${timeout}ms timeout!`), timeout);
+            setTimeout(() => reject(new TimeoutError(`Rejected by ${timeout}ms timeout!`)), timeout);
         }
 
         if(tryCount <= 0){
@@ -35,6 +36,7 @@ export async function repeatUntil<ReturnDataType>({
                 }
             } catch (err) {
                 reject(err);
+                return;
             }
         }
         

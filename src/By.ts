@@ -78,6 +78,6 @@ export class ByBuilder{
 }
 
 export const By = new ByBuilder({
-    timeout: BunchConfig.default.findElementTimeout,
-    tryCount: BunchConfig.default.findElementTryCount
+    timeout: BunchConfig.default.repeatUntilTimeout,
+    tryCount: BunchConfig.default.repeatUntilTryCount
 });

@@ -1,14 +1,21 @@
 import { repeatUntil } from "./utils/request-utils";
 import { AppiumElement, Vector2d } from "./AppiumElement";
 import { ByBuilder } from "./By";
+import { ActionsStack } from "./ActionStack";
 
 export class SyncElement extends AppiumElement{
     
+    protected actionsStack: ActionsStack;
+
+    constructor(client: WebDriver.Client, actionStack: ActionsStack, IDs: string[] = []){
+        super(client, IDs);
+    }
+
     get(locator: ByBuilder): AppiumElement {
         throw new Error("Method not implemented.");
     }    
     getElements(): AppiumElement[] {
-        return this.IDs.map(id => new SyncElement(this.client, [id]))
+        return this.IDs.map(id => new SyncElement(this.client, this.actionsStack, [id]))
     }
     click(): AppiumElement {
         throw new Error("Method not implemented.");
@@ -61,6 +68,4 @@ export class SyncElement extends AppiumElement{
     getLocationInView(): Promise<Vector2d> {
         throw new Error("Method not implemented.");
     }
-
-    
 }

@@ -2,6 +2,7 @@ import Webdriver from 'webdriver';
 import { ByBuilderResult, ByBuilder } from './By';
 import { repeatUntil } from './utils/request-utils';
 import { SyncElement } from './SyncElement';
+import { ActionsStack } from './ActionStack';
 
 export interface FindElementSuccessResponse{
     ELEMENT: string;
@@ -10,9 +11,10 @@ export interface FindElementSuccessResponse{
 
 export class BenchDriver{
     protected _client!: WebDriver.Client;
+    protected actionsStack: ActionsStack;
 
     constructor(protected _options: WebDriver.Options){
-        
+        this.actionsStack = new ActionsStack();
     }
 
     async get(by: ByBuilder): Promise<SyncElement>{
@@ -48,7 +50,7 @@ export class BenchDriver{
             throw new Error(`Can't find any element with using "${by.options.field}" with value "${by.options.value}"!`);
         });
 
-        const result = new SyncElement(this.client, await elementIdsPromise);
+        const result = new SyncElement(this.client, this.actionsStack, await elementIdsPromise);
 
         return result;
     };

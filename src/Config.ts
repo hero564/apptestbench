@@ -1,12 +1,12 @@
 export interface Config{
-    findElementTimeout?: number;
-    findElementTryCount?: number;
+    repeatUntilTimeout?: number;
+    repeatUntilTryCount?: number;
 }
 
 export class BunchConfig{
     static default: Config = {
-        findElementTimeout: 60000,
-        findElementTryCount: 0
+        repeatUntilTimeout: 60000,
+        repeatUntilTryCount: 0
     }
 
     static current: Config = BunchConfig.default;

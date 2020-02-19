@@ -2,7 +2,6 @@ import { repeatUntil } from "./utils/request-utils";
 import { AppiumElement, Vector2d } from "./AppiumElement";
 import { ByBuilder } from "./By";
 import { ActionsStack } from "./ActionStack";
-import { isNull } from "util";
 
 export class SyncElement extends AppiumElement{
     
@@ -22,9 +21,7 @@ export class SyncElement extends AppiumElement{
             try{
                 return await repeatUntil({
                     requestFunction: () => this.client.elementClick(this.ID),
-                    responseHandler: response => {
-                        return isNull(response)
-                    }
+                    responseHandler: response => response === null
                 })
             } catch (err) {
                 throw new Error(`Unable to click on the element!`);
@@ -39,7 +36,7 @@ export class SyncElement extends AppiumElement{
             try{
                 return await repeatUntil({
                     requestFunction: () => this.client.sendKeys(value.split('')),
-                    responseHandler: response => isNull(response)
+                    responseHandler: response => response === null
                 });
             } catch (err) {
                 throw new Error(`Unable to send keys value: "${value}"!`);

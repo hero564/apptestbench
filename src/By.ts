@@ -5,6 +5,7 @@ export interface ByBuilderResult{
     value?: string;
     timeout?: number;
     tryCount?: number;
+    cached?: boolean;
 }
 
 export class ByBuilder{
@@ -58,21 +59,35 @@ export class ByBuilder{
         })
     }
 
-    noRetry(): ByBuilder{
+    noRetry(): ByBuilder {
         return new ByBuilder({
             ...this.options,
             tryCount: 1
         })
     }
 
-    infinitiveRetry(): ByBuilder{
+    infinitiveRetry(): ByBuilder {
         return new ByBuilder({
             ...this.options,
             tryCount: 0
         })
     }
 
-    get options() {
+    cached(): ByBuilder {
+        return new ByBuilder({
+            ...this.options,
+            cached: true
+        })
+    }
+    
+    noCached(): ByBuilder {
+        return new ByBuilder({
+            ...this.options,
+            cached: false
+        })
+    }
+
+    get options(): ByBuilderResult {
         return this._options;
     }
 }

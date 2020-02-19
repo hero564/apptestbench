@@ -1,12 +1,14 @@
 export interface Config{
     repeatUntilTimeout?: number;
     repeatUntilTryCount?: number;
+    useElementsIdCaching?: true;
 }
 
 export class BunchConfig{
     static default: Config = {
         repeatUntilTimeout: 60000,
-        repeatUntilTryCount: 0
+        repeatUntilTryCount: 0,
+        useElementsIdCaching: true
     }
 
     static current: Config = BunchConfig.default;
